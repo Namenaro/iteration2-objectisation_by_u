@@ -27,6 +27,19 @@ class VisualECG:
         self.ecg_to_fig(leads_names, from_, to_)
         plt.show()
 
+    def ecg_with_additional_signal(self, other_channel, from_, to_, leads_names):
+        numleads = len(leads_names)
+        fig, axs = plt.subplots(numleads+1, 1, figsize=(8, 2 * (numleads+1)), sharex=False, sharey=False)
+        axs = axs.ravel()
+
+        axs[0].plot(other_channel[from_:to_],'r')
+        for i in range(1, numleads+1):
+            name = leads_names[i-1]
+            signal = get_lead_signal(self.ecg_node, name)[from_:to_]
+            axs[i].plot(signal)
+            axs[i].set_title(name)
+        #plt.title(get_ecg_description(self.ecg_node))
+        return fig
 
 if __name__ == "__main__":
     from utils import get_7_helthy_json
@@ -36,5 +49,5 @@ if __name__ == "__main__":
         json_node = json_data[key]
         vis = VisualECG(json_node)
         #vis.ecg_to_fig(["i","ii"],0, 300)
-        vis.show_component(from_=150, to_=150, leads_names=['i','ii'], component='qrs')
+        vis.show_component(from_=50, to_=50, leads_names=['i','ii'], component='qrs')
         plt.show()
